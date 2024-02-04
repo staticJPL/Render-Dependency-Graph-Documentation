@@ -1,0 +1,2 @@
+Preface: The goal of this document is to highlight the rendering pipeline used inside Unreal Engine 5.1. The paper will outline some basics of the graphics
+pipeline and how Unreal interfaces with many Graphics APIs to perform rendering.
