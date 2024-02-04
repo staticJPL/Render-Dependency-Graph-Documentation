@@ -5,7 +5,7 @@
 In order to grasp the content of this document a basic understanding of a graphics rendering pipeline is needed. Below is an example of the Vulkan Graphics
 Pipeline. You can skip this section if you know already about the graphics pipeline.
 
-![[Unreal Engine Render Dependency Graph/Diagrams/VulkanPipeLine.png]]
+![[Unreal Engine Render Dependency Graph/Diagrams/VulkanPipeLine.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/08e9c57045b6a88b7918499961a3c2e2e23e83ff/Diagrams/VulkanPipeLine.png)
 
 There are many types of graphics pipelines used across many platforms some examples are Vulkan, DirectX, OpenGL. All pipelines share common steps in the
 pipeline such as the Input Assembler, Vertex Shader, Rasterization and Fragment Shader (also know and pixel shader). Some API’s have different steps before or
@@ -16,7 +16,7 @@ allow you to bind to input Semantics which I will explore later on.
 
 `Step 2.` The Vertex shader is run for every vertex and generally applies transformations to turn vertex positions from model space to screen space. It also passes per-vertex data down the pipeline. In general before doing any Matrix Transformations from the vertex to world space, local space or screen space. The vertex data will be interpreted in the standard Clip Space.
 
-![[Unreal Engine Render Dependency Graph/Diagrams/Coordinate Systems.png]]
+![[Unreal Engine Render Dependency Graph/Diagrams/Coordinate Systems.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/08e9c57045b6a88b7918499961a3c2e2e23e83ff/Diagrams/Coordinate%20Systems.png)
 
 `Step 3.` **The Geometry shader** is run on every primitive (triangle, line, point) and can discard it or output more primitives than came in. This is similar to the
 tessellation shader, but much more flexible. However, it is not used much in today's applications, reiterating some API’s are different.
