@@ -4,7 +4,7 @@ In 2017 Yuriy O’Donnell pioneered a render graph system while working for Fros
 advantages this system provided was taken into Unreal Engine and as of 2021 the use of the render graph has become the standard in AAA game engine
 development.
 
-![[Unreal Engine Render Dependency Graph/Diagrams/RDG_CommandQueue.png]]
+![[Unreal Engine Render Dependency Graph/Diagrams/RDG_CommandQueue.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/563954a23906d392d55727b1132446abdd73d0dd/Diagrams/RDG_CommandQueue.png)
 
 ### Properties
 
@@ -13,7 +13,7 @@ for tools to interpret resource lifetimes and render pass dependencies to effect
 
 The next generation of Graphics APIs such as DX12 and Vulkan manage resource states and transitions depending on operations we want to perform.
 
-![[Unreal Engine Render Dependency Graph/Diagrams/RDG_ResourceTransition.png]]
+![[Unreal Engine Render Dependency Graph/Diagrams/RDG_ResourceTransition.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/563954a23906d392d55727b1132446abdd73d0dd/Diagrams/RDG_ResourceTransition.png)
 
 Using render graphs these operations can be handled automatically without manual input. As seen in the diagram above, a graphics programmer can declare
 what resources are needed for their shader input, render targets and or depth-stencils. Resource transitions are handled by the graph, you can visualize the
@@ -22,7 +22,7 @@ resource transitions. This means that a optimal barrier ensures that there is an
 `Pass 1` but as a render target for `pass 2` then we will still need a resource transition to render between the two targets. This reduces calls and saves memory
 allocation.
 
-![[Unreal Engine Render Dependency Graph/Diagrams/RDG_PassResourceLifetime.png]]
+![[Unreal Engine Render Dependency Graph/Diagrams/RDG_PassResourceLifetime.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/563954a23906d392d55727b1132446abdd73d0dd/Diagrams/RDG_PassResourceLifetime.png)
 
 In the image above, for example, `resource A` is used only up to the third pass. On the other hand, `resource C` starts getting used in the fourth pass, and so its
 lifetime does not overlap the one of `resource A`, meaning that we can use the same memory for both resources.
@@ -43,14 +43,14 @@ managing their state. This is know as `external resources`.
 
 The lifetime of transient resources can have what’s called “resource aliasing” for these resources (according to DX12 terminology).
 
-![[Unreal Engine Render Dependency Graph/Diagrams/RDG_Aliasing.png]]
+![[Unreal Engine Render Dependency Graph/Diagrams/RDG_Aliasing.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/563954a23906d392d55727b1132446abdd73d0dd/Diagrams/RDG_Aliasing.png)
 
 Aliased resources can spare more than 50% of the used resource allocation space, especially when using a render graph. They add an additional managing
 resource complexity to the scene, but if we want to spare memory, they are almost always worth it.
 
 ### Build Cross-Queues Synchronization
 
-![[Unreal Engine Render Dependency Graph/Diagrams/RDG_CommandDependencyTree.png]]
+![[Unreal Engine Render Dependency Graph/Diagrams/RDG_CommandDependencyTree.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/563954a23906d392d55727b1132446abdd73d0dd/Diagrams/RDG_CommandDependencyTree.png)
 
 
 Lastly the graph allows us to use multiple command queues and run them in parallel, using a dependency tree we can synchronize these mechanism to prevent
@@ -89,7 +89,7 @@ The workflow of Unreal Engines RDG can be Identified in a 3 step process:
 
 **Running/Execute phase**: all the graph nodes get executed.
 
-![[Unreal Engine Render Dependency Graph/Diagrams/RDG_Stages.png]]
+![[Unreal Engine Render Dependency Graph/Diagrams/RDG_Stages.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/563954a23906d392d55727b1132446abdd73d0dd/Diagrams/RDG_Stages.png)
 
 ### Setup Stage
 
@@ -167,7 +167,7 @@ have time to cover and or experiment with. I will provide some resources for tha
 
 ### Shader Parameters
 
-![[Unreal Engine Render Dependency Graph/Diagrams/RDG_ShaderParameterBinding.png]]
+![[Unreal Engine Render Dependency Graph/Diagrams/RDG_ShaderParameterBinding.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/563954a23906d392d55727b1132446abdd73d0dd/Diagrams/RDG_ShaderParameterBinding.png)
 
 The shader parameters are the objects that are gonna identify the resource slots used by a shader. These parameters are used when setting resources for a
 graphics compute or computer operation.
@@ -233,7 +233,7 @@ SetShaderParameters(TRHICmdList& RHICmdList, const TShaderRef&lt;TShaderClass>& 
 TShaderClass::FParameters& Parameters)
 ```
 
-![[Unreal Engine Render Dependency Graph/Diagrams/RDG_SettingShaderParams.png]]
+![[Unreal Engine Render Dependency Graph/Diagrams/RDG_SettingShaderParams.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/563954a23906d392d55727b1132446abdd73d0dd/Diagrams/RDG_SettingShaderParams.png)
 
 from ShaderParameterStruct.h will be called to bind input resources to a specific shader.
 
@@ -428,7 +428,7 @@ Now the uniform buffer we set can be accessed anywhere
 #include "/Engine/Generated/GeneratedUniformBuffers.ush"
 ```
 
-![[Unreal Engine Render Dependency Graph/Diagrams/SceneTextureStruct.png]]
+![[Unreal Engine Render Dependency Graph/Diagrams/SceneTextureStruct.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/563954a23906d392d55727b1132446abdd73d0dd/Diagrams/SceneTextureStruct.png)
 
 Now reference our uniform buffer inside our Parameter struct
 
