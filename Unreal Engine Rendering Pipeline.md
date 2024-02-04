@@ -8,7 +8,7 @@ is because the output of a previous pass may be used as input for other sequenti
 `Deferred rendering` is a default method in Unreal that renders lights and materials in a separate pass. This separate pass waits for the base pass to accumulate
 the information about key information such as opacity, specular, diffusion, normals etc. An example below shows how the deferred rendering works.
 
-![[Unreal Engine Render Dependency Graph/Diagrams/DeferredRender.png]]
+![[Unreal Engine Render Dependency Graph/Diagrams/DeferredRender.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/a49756d90f6362b9a8ab10e4ac16edddac530e03/Diagrams/DeferredRender.png)
 
 Instead of computing lighting and shading for each pixel as it rasterized, Unreal uses deferred rendering to capture information about the scene’s geometry into
 the “off-screen” Gbuffers. Then it’s used on a second pass to apply lighting and shading to the scene. The advantage of this is that it allows for more efficient use
@@ -35,7 +35,9 @@ The Geometry pass is where the meshes get drawn and prioritized before lighting.
 
 #### PrePass
 
-![[Unreal Engine Render Dependency Graph/Diagrams/PrePass.png]]Early Rendering of Depth Z-Buffer, which is used to optimize out meshes bases on translucency. This also is used to optimize out meshes that are hidden behind
+![[Unreal Engine Render Dependency Graph/Diagrams/PrePass.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/a49756d90f6362b9a8ab10e4ac16edddac530e03/Diagrams/PrePass.png)
+
+Early Rendering of Depth Z-Buffer, which is used to optimize out meshes bases on translucency. This also is used to optimize out meshes that are hidden behind
 other meshes to cull them out (to not render them)
 
 **HZB**
@@ -59,13 +61,13 @@ This is the most hardcore part of the frame, especially with a lot of dynamic an
 **Shadow Depths**
 - Generates depth maps for shadow-casting lights
 
-![[Unreal Engine Render Dependency Graph/Diagrams/ShadowProjection.png]]
+![[Unreal Engine Render Dependency Graph/Diagrams/ShadowProjection.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/a49756d90f6362b9a8ab10e4ac16edddac530e03/Diagrams/ShadowProjection.png)
 
 **Shadow Projection**
 - Final Rendering of Shadows
 
 **Indirect Lighting**
-![[Unreal Engine Render Dependency Graph/Diagrams/IndirectLighting.png]]
+![[Unreal Engine Render Dependency Graph/Diagrams/IndirectLighting.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/a49756d90f6362b9a8ab10e4ac16edddac530e03/Diagrams/IndirectLighting.png)
 - Screen space ambient occlusion
 - Decals (non-Buffer type)
 
