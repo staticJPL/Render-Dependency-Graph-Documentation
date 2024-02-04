@@ -1,6 +1,6 @@
 # Scene View Extension Triangle Shader
 
-![[Unreal Engine Render Dependency Graph/Diagrams/Triangle Render.png]]
+![[Unreal Engine Render Dependency Graph/Diagrams/Triangle Render.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/5110a92b8c25e1eab6f28e73456570649c2d0470/Diagrams/Triangle%20Render.png)
 
 With this knowledge the next step is to put it into practice. The “Hello World” of graphics programming is to draw a basic triangle using the Vertex Shader and
 Pixel Shader. Drawing a triangle in Unreal Engine encapsulates the process for rendering anything in the Engine itself.
@@ -20,6 +20,7 @@ Go ahead and create a basic C++ project in Unreal Engine, First Person shooter w
 Once you’ve create the project, navigate to your folder structure and add a Shader Folder.
 Here is a rough example of what it looks like
 
+```
 ├── YourProjectName
 ………├──> YourProjectName.Build.cs
 ………├──> Source Folder
@@ -33,6 +34,7 @@ Here is a rough example of what it looks like
 ……………………………└──>Public
 ……………………………└──>YourPluginName.Build.cs
 ……….└──> YourPluginName.uplugin
+```
 
 
 Go to the PluginName.Build.cs file and ensure the dependencies are there.
@@ -743,6 +745,6 @@ InOutPassCallbacks, bool bIsPassEnabled)
 
 You should see the triangle drawn to the viewport of your editor.
 
-![[Unreal Engine Render Dependency Graph/Diagrams/TriangleOutput.png]]
+![[Unreal Engine Render Dependency Graph/Diagrams/TriangleOutput.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/5110a92b8c25e1eab6f28e73456570649c2d0470/Diagrams/TriangleOutput.png)
 
 
