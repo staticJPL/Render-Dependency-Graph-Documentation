@@ -6,7 +6,7 @@ interface between all these API’s so they could keep the Rendering code as com
 
 This achieved using different render threads as shown below:
 
-![[Unreal Engine Render Dependency Graph/Diagrams/RHIUnrealDiagram.png]]
+![[Unreal Engine Render Dependency Graph/Diagrams/RHIUnrealDiagram.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/e97260a557e345d37c2bb0b6352c82d35a4138df/Diagrams/RHIUnrealDiagram.png)
 
 We have a Game thread, Render thread and RHI Thread. The important thing to understand is that anything that’s rendered has a twin object between game
 thread and the render thread aside from some other specific cases.
@@ -23,7 +23,7 @@ thread and the render thread aside from some other specific cases.
 - Translates RHI “immediate” instructions from the Rendering thread to GPU based on the API specified. Note RHI Immediate really means immediate it’s not the same as a regular RHI command which is usually deferred.
 - DX12, Vulkan and Host support parallelism and if a RHI immediate instruction is a generated parallel command then the RHI thread will translate it in parallel.
 
-![[Unreal Engine Render Dependency Graph/Diagrams/Parallel CommandList RHI.png]]
+![[Unreal Engine Render Dependency Graph/Diagrams/Parallel CommandList RHI.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/e97260a557e345d37c2bb0b6352c82d35a4138df/Diagrams/Parallel%20CommandList%20RHI.png)
 
 ## Basics of RHI
 
