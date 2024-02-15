@@ -44,10 +44,10 @@ https://medium.com/realities-io/creating-a-custom-mesh-component-in-ue4-part-1-a
 
 Unreal Engine RHI
 ----------------------------------------------
-Analysis of Unreal Engine Rendering System: (Chinese)
+Analysis of Unreal Engine Rendering System: (Chinese) timlly-chang
 https://www.cnblogs.com/timlly/p/15156626.html#101-%E6%9C%AC%E7%AF%87%E6%A6%82%E8%BF%B0
 
-RDG Architecture
+RDG Architecture by Riccardo Loggini
 https://logins.github.io/graphics/2021/05/31/RenderGraphs.html
 
 RDG Analysis (Chinese)
