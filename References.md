@@ -70,5 +70,6 @@ Scene View Extension Class
 ------------------------------------------
 Forum Post
 https://forums.unrealengine.com/t/using-sceneviewextension-to-extend-the-rendering-system/600098
+
 Caius’ Blog Global Shaders using Scene View Extension Class
 https://itscai.us/blog/post/ue-view-extensions/
