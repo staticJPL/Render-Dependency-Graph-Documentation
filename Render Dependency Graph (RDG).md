@@ -4,7 +4,7 @@ In 2017 Yuriy O’Donnell pioneered a render graph system while working for Fros
 advantages this system provided was taken into Unreal Engine and as of 2021 the use of the render graph has become the standard in AAA game engine
 development.
 
-Riccardo Loggini work below describes in detail how the Render Dependency Graph operates.
+Riccardo Loggini's work below describes in detail how the Render Dependency Graph operates.
 
 ![[Unreal Engine Render Dependency Graph/Diagrams/RDG_CommandQueue.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/563954a23906d392d55727b1132446abdd73d0dd/Diagrams/RDG_CommandQueue.png)
 
