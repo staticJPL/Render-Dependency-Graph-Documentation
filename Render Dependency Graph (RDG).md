@@ -10,36 +10,35 @@ Riccardo Loggini's work below describes in detail how the Render Dependency Grap
 
 ### Properties
 
-With the Render Graph we are able to abstract render operations to a single way to produce render code. This allows for clarity of the code and debuggability
-for tools to interpret resource lifetimes and render pass dependencies to effectively reduce development time.
 
-The next generation of Graphics APIs such as DX12 and Vulkan manage resource states and transitions depending on operations we want to perform.
+The Render Dependency Graph abstracts render operations into a concise form for generating render code. This approach enhances code clarity and facilitates debuggability, enabling tools to interpret resource lifetimes and render pass dependencies effectively, thereby reducing development time.
+
+The next generation of Graphics APIs such as DX12 and Vulkan manage resource states transitions depending on operations performed.
 
 ![[Unreal Engine Render Dependency Graph/Diagrams/RDG_ResourceTransition.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/563954a23906d392d55727b1132446abdd73d0dd/Diagrams/RDG_ResourceTransition.png)
 
-Using render graphs these operations can be handled automatically without manual input. As seen in the diagram above, a graphics programmer can declare
-what resources are needed for their shader input, render targets and or depth-stencils. Resource transitions are handled by the graph, you can visualize the
-green lines as “read” and red lines as “write” operations. Each render graph node has knowledge of these interactions and allows it to place `Barriers` for
-resource transitions. This means that a optimal barrier ensures that there is an optimal command queue setup. So if `resource A` is used as a shader resource for
-`Pass 1` but as a render target for `pass 2` then we will still need a resource transition to render between the two targets. This reduces calls and saves memory
+Using render graphs allows operations to be handled automatically without manual input. As seen in the diagram above, a graphics programmer can declare
+what resources are needed for their shader input. Since Resource transitions are handled by the graph, you can visualize the
+green lines as “read” and red lines as “write” operations. Each render graph node has knowledge of these operations and allows it to place `Barriers` for
+resource transitions. This means that optimal barriers placed ensure there is an optimal command queue setup. So if `resource A` is used as a shader resource for
+`Pass 1` but as a render target for `pass 2` then you will still need a resource transition to render between these two targets. This reduces calls and saves memory
 allocation.
 
 ![[Unreal Engine Render Dependency Graph/Diagrams/RDG_PassResourceLifetime.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/563954a23906d392d55727b1132446abdd73d0dd/Diagrams/RDG_PassResourceLifetime.png)
 
 In the image above, for example, `resource A` is used only up to the third pass. On the other hand, `resource C` starts getting used in the fourth pass, and so its
-lifetime does not overlap the one of `resource A`, meaning that we can use the same memory for both resources.
+lifetime does not overlap `resource A`, meaning we have reuse of the same memory for both resources.
 
-The same concept applies for resource A and D, and in general we will have multiple ways to overlap our memory allocations, so we will also need clever ways to detect the best allocation strategy.
+The same concept applies for resource A and D. In general there will be multiple ways to overlap our memory allocations, so we will also need clever ways to detect the best allocation strategy.
 
 
 ### RDG Resources
 
 There are resources that are used on “Per-frame” basis: which are technically called graph or transient resources since their lifetime can be fully handled by the
-render graph. Some examples of “Per-Frame” resources are `Gbuffers` and Camera Depth which are deferred in lighting pass.
+render graph. Some examples of “Per-Frame” resources are `Gbuffers` and Camera Depth which are deferred in the lighting pass.
 
-`Transient` resources are meant for a render graph to last for a specific time within a single frame so there is a lot of potential for memory re-use. The are other
-resources that are used outside and are dependent on other resources like a window swapchain back buffer, so the graph in this case will limit itself to just
-managing their state. This is know as `external resources`.
+
+`Transient` resources are intended for a render graph to exist for a specific duration within a single frame, offering significant potential for memory reuse. There are other resources used externally and dependent on other resources, such as a window swapchain back buffer. In this case, the graph will limit itself to managing their state, known as `external resources`.
 
 ### Transient Resource System
 
@@ -47,55 +46,54 @@ The lifetime of transient resources can have what’s called “resource aliasin
 
 ![[Unreal Engine Render Dependency Graph/Diagrams/RDG_Aliasing.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/563954a23906d392d55727b1132446abdd73d0dd/Diagrams/RDG_Aliasing.png)
 
-Aliased resources can spare more than 50% of the used resource allocation space, especially when using a render graph. They add an additional managing
-resource complexity to the scene, but if we want to spare memory, they are almost always worth it.
+Aliased resources can spare no more than 50% of the used resource allocation space, especially when using a render graph. They add an additional managing
+resource complexity to the scene, but if we want to spare memory, it's almost always worth it.
 
 ### Build Cross-Queues Synchronization
 
 ![[Unreal Engine Render Dependency Graph/Diagrams/RDG_CommandDependencyTree.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/563954a23906d392d55727b1132446abdd73d0dd/Diagrams/RDG_CommandDependencyTree.png)
 
+Lastly the graph allows us to use multiple command queues to run them in parallel. A dependency tree can aid in synchronizinng this mechanism to prevent
+race conditions on shared resources.
 
-Lastly the graph allows us to use multiple command queues and run them in parallel, using a dependency tree we can synchronize these mechanism to prevent
-race conditions on the shared resources.
+An acyclic graph of render passes emerges after laying down every pass from the dependent queues. Each level of the tree is referred to as a dependency level and is comprised of passes independent of each with other in terms of their resource usage. This arrangement ensures that every pass in the same dependency level can potentially run asynchronously. While it's possible to have multiple passes belonging to the same queue in the same dependency level, this does not pose an issue.
 
-An acyclic graph of render passes, which we have after we lay down every pass from the dependent queues. Each level of a dependency tree, called dependency
-level, will contain passes independent of each other, in the sense of their resource usage. By doing that we can ensure that every pass in the same dependency
-level can potentially run asynchronously. We can still have cases of multiple passes belonging to the same queue in the same dependency level, but this does
-not bother us.
-
-As a consequence, we can put a synchronization point with a GPU fence at the end of every dependency level: this will execute the needed resource transitions,
-for Every queue on a single graphics command list. This approach of course does not come for free, since using fences and syncing different command queues
-has a time cost. In addition to that, it will not always be the optimal and smallest amount of synchronizations, but it will produce acceptable performance and it
+As a consequence, a synchronization point with a GPU fence at the end of every dependency level can execute the needed resource transitions for every queue on a single graphics command list. This approach of course does not come for free, since using fences and syncing different command queues
+has a time cost. In addition to that, it will not always be the optimal and smallest amount of synchronizations, but it will produce acceptable performance to 
 should cover all the possible edge cases.
 
-Thus this highlights the advantages of the Render Graph in a nutshell. Better resource management, easier debugging tools and parallel command list
-synchronization. Additional information on this is linked in the references.
+This highlights the advantages of the Render Graph in a nutshell.
+
+- Better resource management,
+- Easier debugging tools
+- Parallel command list
+- Synchronization.
 
 ### RDG Dynamics
 
 Some new terminology needs to be addressed on top of what we already seen in the context of RDG.
 
-- **View**: a single “viewport” looking at the FScene. When playing in split screen or rendering left and right eye in VR for example, we are going to have two views.
+- **View**: A single “viewport” looking at the FScene. When playing in split screen or rendering left and right eye in VR for example will contain have two views (Inside a view family).
 
-- **Vertex Factory**: class encapsulating vertex data and it is linked to the input of a vertex shader. We have different vertex factory types depending on the kind of mesh we are rendering.
+- **Vertex Factory**: A class that encapsulating vertex data to link as an input to a vertex shader. There are different vertex factory types depending on the kind of mesh we are rendering.
 
-- **Pooled Resource**: graphics resource created and handled by the RDG. Their availability is guaranteed during RDG passes execution only.
+- **Pooled Resource**: A graphics resource created and handled by the RDG. Their availability is guaranteed during RDG passes execution only.
 
-- **External Resource**: graphics resource created independently from the RDG. 
+- **External Resource**: A graphics resource created independently from the RDG. 
 
 The workflow of Unreal Engines RDG can be Identified in a 3 step process:
 
-**Setup phase**: declares which render passes will exist and what resources will be accessed by them.
+**Setup phase**: Declares which render passes will exist and what resources will be accessed by them.
 
-**Compile phase**: figure out resources lifetime and make resource allocations accordingly.
+**Compile phase**: Figures out the resources lifetime to make resource allocations accordingly.
 
-**Running/Execute phase**: all the graph nodes get executed.
+**Running/Execute phase**: All graph nodes get executed.
 
 ![[Unreal Engine Render Dependency Graph/Diagrams/RDG_Stages.png]](https://github.com/staticJPL/Render-Dependency-Graph-Documentation/blob/563954a23906d392d55727b1132446abdd73d0dd/Diagrams/RDG_Stages.png)
 
 ### Setup Stage
 
-The setup stage begins inside` FRenderModule`, which is triggered by only the render thread main function. Which builds passes for the visible views and all
+The setup stage begins inside` FRenderModule` and is triggered by only the render threads main function. This builds passes for the visible views and all
 objects associated with them.
 
 ```cpp
@@ -138,17 +136,19 @@ In this phase the graph gets inspected to find all the possible flow optimizatio
 
 ### Running Stage
 
-With the term Running Stage we mean the time when the lambda function of an RDG pass gets executed. This will happen asynchronously and the exact
+The Running Stage describes the time when the lambda function of an RDG pass gets executed. This will happen asynchronously and the exact
 moment is completely up to the RDG.
 
 When the lambda body executes, the available input will be the variables captured by the lambda and a command list (either `RHIComputeCommandList&` for
 `Compute `/ `AsyncCompute` workloads or `FRHICommandList&` for raster operations).
+
 What essentially happens inside the lambda body is the following
 
-
-- Set Pipeline state object: e.g. setting rasterizer, blend and depth/stencil states.
-- Set Shaders and their Attributes: select what shaders to use, bind them to the current pipeline and set parameters for them, which means binding resources to the shader slots, on the current command list.
-- Send copy/draw/dispatch command: send render commands on the command list.
+- Set a pipeline state object, e.g. setting rasterizer, blend and depth/stencil states.
+- Set shaders and their attributes.
+- Selects what shaders to use and binds them to the current pipeline.
+- Defines parameters which means binding resources to the shader slots on the current command list.
+- Send copy/draw/dispatch commands and send render commands to the command list.
 
 ### Execute Phase
 
