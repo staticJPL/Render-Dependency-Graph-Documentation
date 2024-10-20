@@ -127,10 +127,6 @@ Next set the modules loading phase inside YourPluginName.uplugin to “PostConfi
 The next step is to bind the shader folder with Unreal so it can find and compile our custom shader code.
 
 ```cpp
-#include "FroyokLensFlarePlugin.h"
-#include "Interfaces/IPluginManager.h"
-#define LOCTEXT_NAMESPACE "FFroyokLensFlarePluginModule"
-
 void FYourPluginNameModule::StartupModule()
 {
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file permodule
@@ -143,7 +139,6 @@ void FYourPluginNameModule::ShutdownModule()
 // This function may be called during shutdown to clean up your module. For modules that support dynamic reloading,
 // we call this function before unloading the module.
 }
-#undef LOCTEXT_NAMESPACE
 IMPLEMENT_MODULE(FYourPluginNameModule, YourPluginNamePlugin)
 ```
 
